@@ -17,8 +17,6 @@ import authRoutes from '../src/routes/auth.route';
 
 import connectPassport from './utils/passport';
 
-import auth from './middlewares/auth.middleware';
-
 const corsOptions = {
     origin: process.env.CLIENT_URL,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -55,8 +53,8 @@ app.enable('trust proxy');
 connectPassport();
 
 app.use('/', express.static('public'));
-app.use('/api/user', auth.authenticate, userRoutes);
-app.use('/api/food', auth.adminAuthenticate, foodRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/food', foodRoutes);
 app.use('/api/upload', fileRoutes);
 app.use('/api/auth', authRoutes);
 
