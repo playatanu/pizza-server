@@ -12,6 +12,7 @@ import pathNotFound from './middlewares/pathNotFound.middleware';
 
 import userRoutes from '../src/routes/user.route';
 import foodRoutes from '../src/routes/food.route';
+import orderRoutes from '../src/routes/order.route';
 import fileRoutes from '../src/routes/file.route';
 import authRoutes from '../src/routes/auth.route';
 
@@ -55,6 +56,7 @@ connectPassport();
 app.use('/', express.static('public'));
 app.use('/api/user', userRoutes);
 app.use('/api/food', foodRoutes);
+app.use('/api/order', orderRoutes);
 app.use('/api/upload', fileRoutes);
 app.use('/api/auth', authRoutes);
 
