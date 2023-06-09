@@ -19,36 +19,15 @@ const getAll = async (req: Request, res: Response, next: NextFunction) => {
 const getById = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const id = req.params.id;
+
         const user = await userModel.findById(id);
-        if (user) res.status(200).json({ data: user });
-        else res.status(404).json({ message: 'not found!' });
-    } catch (error) {
-        next(error);
-    }
-};
 
-/**
- * create user by id
- */
-const create = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const userData = req.body;
-        const user = new userModel(userData);
-
-        const existedUser = await userModel.findByEmail(user.email);
-
-        if (existedUser) {
-            res.status(200).json({ message: 'email already registered!' });
+        if (user) {
+            res.status(200).json({ data: user });
             return;
         }
 
-        const createdUser = await userModel.create(user);
-
-        if (createdUser) {
-            res.status(200).json({ message: 'create successfuly!' });
-            return;
-        }
-        res.status(500).json({ message: 'something wrong!' });
+        res.status(404).json({ message: 'not found!' });
     } catch (error) {
         next(error);
     }
@@ -62,10 +41,15 @@ const updateById = async (req: Request, res: Response, next: NextFunction) => {
         const id = req.params.id;
         const email = req.body.email;
         const phone = req.body.phone;
+
         const user = await userModel.findByIdAndUpdate(id, { email, phone });
 
-        if (user) res.status(200).json({ message: 'update successfuly!' });
-        else res.status(500).json({ message: 'something wrong!' });
+        if (user) {
+            res.status(200).json({ message: 'update successfuly!' });
+            return;
+        }
+
+        res.status(500).json({ message: 'something wrong!' });
     } catch (error) {
         next(error);
     }
@@ -77,13 +61,17 @@ const updateById = async (req: Request, res: Response, next: NextFunction) => {
 const deleteById = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const id = req.params.id;
+
         const user = await userModel.findByIdAndDelete(id);
 
-        if (user) res.status(200).json({ message: 'delete successfuly!' });
+        if (user) {
+            res.status(200).json({ message: 'delete successfuly!' });
+            return;
+        }
         res.status(500).json({ message: 'something wrong!' });
     } catch (error) {
         next(error);
     }
 };
 
-export default { getAll, getById, create, updateById, deleteById };
+export default { getAll, getById, updateById, deleteById };
