@@ -10,11 +10,11 @@ const getAll = async (req: Request, res: Response, next: NextFunction) => {
 
         if (category) {
             const foods = await foodModel.findByCategory(category);
-            res.status(200).json({ data: foods });
+            res.status(200).json(foods);
             return;
         }
         const foods = await foodModel.find();
-        res.status(200).json({ data: foods });
+        res.status(200).json(foods);
     } catch (error) {
         next(error);
     }
@@ -28,7 +28,7 @@ const getById = async (req: Request, res: Response, next: NextFunction) => {
         const id = req.params.id;
 
         const foods = await foodModel.findById(id);
-        res.status(200).json({ data: foods });
+        res.status(200).json(foods);
     } catch (error) {
         next(error);
     }
@@ -63,6 +63,7 @@ const updateById = async (req: Request, res: Response, next: NextFunction) => {
         const foodData = req.body;
 
         const food = await foodModel.findByIdAndUpdate(id, foodData);
+
         if (food) {
             res.status(200).json({ message: 'update successfuly!' });
             return;
