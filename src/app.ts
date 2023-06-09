@@ -12,12 +12,11 @@ import pathNotFound from './middlewares/pathNotFound.middleware';
 
 import userRoutes from '../src/routes/user.route';
 import foodRoutes from '../src/routes/food.route';
+import orderRoutes from '../src/routes/order.route';
 import fileRoutes from '../src/routes/file.route';
 import authRoutes from '../src/routes/auth.route';
 
 import connectPassport from './utils/passport';
-
-import auth from './middlewares/auth.middleware';
 
 const corsOptions = {
     origin: process.env.CLIENT_URL,
@@ -26,7 +25,7 @@ const corsOptions = {
 };
 
 const sessionOption = {
-    secret: 'keyboard cat',
+    secret: process.env.SESSION_SECRET || '',
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -55,8 +54,9 @@ app.enable('trust proxy');
 connectPassport();
 
 app.use('/', express.static('public'));
-app.use('/api/user', auth.authenticate, userRoutes);
-app.use('/api/food', auth.adminAuthenticate, foodRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/food', foodRoutes);
+app.use('/api/order', orderRoutes);
 app.use('/api/upload', fileRoutes);
 app.use('/api/auth', authRoutes);
 

@@ -1,4 +1,4 @@
-import { Model, Schema, HydratedDocument, model } from 'mongoose';
+import { Model, Schema, HydratedDocument, model, Types } from 'mongoose';
 
 export enum ERole {
     ADMIN = 'admin',
@@ -14,6 +14,7 @@ export interface IUser {
     phone: string;
     role: string;
     address: [];
+    orders: [];
 }
 
 interface UserModel extends Model<IUser, object> {
@@ -25,14 +26,20 @@ interface UserModel extends Model<IUser, object> {
 
 const schema = new Schema<IUser, UserModel>(
     {
-        id: { type: String },
+        id: { type: String, select: false },
         displayName: { type: String },
         photos: [],
-        provider: { type: String },
+        provider: { type: String, select: false },
         email: { type: String },
         phone: { type: String },
-        role: { type: String, enum: ERole, default: ERole.CUSTOMER },
-        address: []
+        role: {
+            type: String,
+            enum: ERole,
+            default: ERole.CUSTOMER,
+            select: false
+        },
+        address: [{ type: String, select: false }],
+        orders: [{ type: Types.ObjectId, ref: 'Order', select: false }]
     },
     { timestamps: true }
 );
