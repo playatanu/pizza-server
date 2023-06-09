@@ -1,5 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
-const pathNotFound = (req: Request, res: Response, next: NextFunction) => {
+import { Request, Response } from 'express';
+
+const pathNotFound = (req: Request, res: Response) => {
     res.status(500).json({
         message: 'page not found!'
     });
