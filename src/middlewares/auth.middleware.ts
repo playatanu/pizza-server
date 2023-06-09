@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { IUser } from '../models/user.model';
 
-const authenticate = (req: Request, res: Response, next: NextFunction) => {
+const user = (req: Request, res: Response, next: NextFunction) => {
     try {
         if (req.user) {
             return next();
@@ -12,7 +12,7 @@ const authenticate = (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
-const adminAuthenticate = (req: Request, res: Response, next: NextFunction) => {
+const admin = (req: Request, res: Response, next: NextFunction) => {
     try {
         const user = <IUser>req.user;
 
@@ -27,4 +27,4 @@ const adminAuthenticate = (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
-export default { authenticate, adminAuthenticate };
+export default { user, admin };
