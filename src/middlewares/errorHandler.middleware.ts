@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+
 const errorHandler = (
     error: Error,
     req: Request,
