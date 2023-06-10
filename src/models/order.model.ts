@@ -1,8 +1,10 @@
 import { Schema, model, Types } from 'mongoose';
-import { EFoodCategory, IFood, IVarient } from './food.model';
+import { EFoodCategory } from './food.model';
 import { IUser } from './user.model';
 
 export enum EOrderStatus {
+    WAIT_FOR_PAYMENT = 'wait for payment',
+    CANCELLED = 'cancelled ',
     PLACED = 'placed',
     CONFIRMATION = 'confirmation',
     PREPARATION = 'preparation',
@@ -16,12 +18,13 @@ export interface IItem {
     category: EFoodCategory;
     image: string;
     varient: string;
+    price: number;
+    quantity: number;
 }
 
 export interface IOrder {
     user: IUser;
     items: Array<IItem>;
-    total: number;
     address: string;
     status: EOrderStatus;
 }
@@ -30,12 +33,11 @@ const schema = new Schema<IOrder>(
     {
         user: { type: Types.ObjectId, ref: 'User' },
         items: [],
-        total: { type: Number, required: true },
         address: { type: String, required: true },
         status: {
             type: String,
             enum: EOrderStatus,
-            default: EOrderStatus.PLACED
+            default: EOrderStatus.WAIT_FOR_PAYMENT
         }
     },
     { timestamps: true }
