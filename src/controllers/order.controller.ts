@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import orderModel from '../models/order.model';
+import orderModel, { EOrderStatus } from '../models/order.model';
 
 /**
  * get all orders
@@ -19,7 +19,9 @@ const getAll = async (req: Request, res: Response, next: NextFunction) => {
  */
 const getById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const orders = await orderModel.find().populate('user');
+        const id = req.params.id;
+
+        const orders = await orderModel.findById(id).populate('user');
 
         res.status(200).json(orders);
     } catch (error) {
@@ -84,6 +86,10 @@ const updateStatusById = async (
         const updatedOrder = await orderModel.findByIdAndUpdate(id, { status });
 
         if (updatedOrder) {
+            /*
+             *send socket response to the client order ststus is updated
+             * io.emait(socket_id as user id, updated order status)            *
+             */
             res.status(200).json({ message: 'create successfuly!' });
             return;
         }
@@ -93,4 +99,32 @@ const updateStatusById = async (
     }
 };
 
-export default { getAll, getById, getAllByUserId, create, updateStatusById };
+/**
+ * cancel order status by Id
+ */
+const cancelById = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const id = req.params.id;
+
+        const cancelOrder = await orderModel.findByIdAndUpdate(id, {
+            status: EOrderStatus.CANCELLED
+        });
+
+        if (cancelOrder) {
+            res.status(200).json({ message: 'cancel successfuly!' });
+            return;
+        }
+        res.status(500).json({ message: 'something wrong!' });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export default {
+    getAll,
+    getById,
+    getAllByUserId,
+    create,
+    updateStatusById,
+    cancelById
+};
