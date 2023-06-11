@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import orderModel, { EOrderStatus } from '../models/order.model';
+import { ESocketEvent, sendMessage } from '../utils/socketio';
 
 /**
  * get all orders
@@ -83,14 +84,22 @@ const updateStatusById = async (
         const order = req.body;
         const status = order.status;
 
-        const updatedOrder = await orderModel.findByIdAndUpdate(id, { status });
+        const updatedOrder = await orderModel.findByIdAndUpdate(
+            id,
+            { status },
+            { new: true }
+        );
 
         if (updatedOrder) {
-            /*
-             *send socket response to the client order ststus is updated
-             * io.emait(socket_id as user id, updated order status)            *
-             */
-            res.status(200).json({ message: 'create successfuly!' });
+            const userId = updatedOrder.user.toString();
+
+            sendMessage(userId, {
+                message: ESocketEvent.ORDER_STATUS_CHANGED,
+                orderId: updatedOrder.id,
+                orderStatus: updatedOrder.status
+            });
+
+            res.status(200).json({ message: 'update status successfuly!' });
             return;
         }
         res.status(500).json({ message: 'something wrong!' });
