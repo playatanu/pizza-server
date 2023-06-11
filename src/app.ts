@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express, { Express } from 'express';
+import { createServer } from 'http';
 
 import cors from 'cors';
 
@@ -17,6 +18,7 @@ import fileRoutes from '../src/routes/file.route';
 import authRoutes from '../src/routes/auth.route';
 
 import connectPassport from './utils/passport';
+import socketConnection from './utils/socketio';
 
 const corsOptions = {
     origin: process.env.CLIENT_URL,
@@ -36,6 +38,9 @@ const sessionOption = {
 };
 
 const app: Express = express();
+const server = createServer(app);
+
+socketConnection(server);
 
 app.use(session(sessionOption));
 app.use(cookieParser());
@@ -63,4 +68,4 @@ app.use('/api/auth', authRoutes);
 app.use(errorHandler);
 app.use(pathNotFound);
 
-export default app;
+export default server;
