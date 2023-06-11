@@ -84,7 +84,11 @@ const updateStatusById = async (
         const order = req.body;
         const status = order.status;
 
-        const updatedOrder = await orderModel.findByIdAndUpdate(id, { status });
+        const updatedOrder = await orderModel.findByIdAndUpdate(
+            id,
+            { status },
+            { new: true }
+        );
 
         if (updatedOrder) {
             const userId = updatedOrder.user.toString();
