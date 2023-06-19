@@ -1,35 +1,36 @@
 import { Model, Schema, HydratedDocument, model, Types } from 'mongoose';
+import { IOrder } from './order.model';
 
 export enum ERole {
     ADMIN = 'admin',
     CUSTOMER = 'customer'
 }
 
-export interface IUser {
+export interface IProvider {
     id: string;
-    displayName: string;
-    photos: [];
-    provider: string;
-    email: string;
-    phone: string;
-    role: string;
-    address: [];
-    orders: [];
+    name: string;
+}
+
+export interface IUser {
+    name: string;
+    photo: string;
+    providers: IProvider[];
+    email?: string;
+    phone?: string;
+    role?: string;
+    address?: string[];
+    orders?: IOrder[];
 }
 
 interface UserModel extends Model<IUser, object> {
-    findByProvider(
-        id: string,
-        provider: string
-    ): Promise<HydratedDocument<IUser>>;
+    findByProvider(provider: IProvider): Promise<HydratedDocument<IUser>>;
 }
 
 const schema = new Schema<IUser, UserModel>(
     {
-        id: { type: String, select: false },
-        displayName: { type: String },
-        photos: [],
-        provider: { type: String, select: false },
+        name: { type: String },
+        photo: { type: String },
+        providers: [{ type: Object, select: false }],
         email: { type: String },
         phone: { type: String },
         role: {
@@ -44,8 +45,11 @@ const schema = new Schema<IUser, UserModel>(
     { timestamps: true }
 );
 
-schema.static('findByProvider', async function findByProvider(id, provider) {
-    return await this.findOne({ id, provider });
-});
+schema.static(
+    'findByProvider',
+    async function findByProvider(provider: IProvider) {
+        return await this.findOne({ providers: { $elemMatch: provider } });
+    }
+);
 
 export default model<IUser, UserModel>('User', schema);

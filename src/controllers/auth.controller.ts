@@ -10,9 +10,7 @@ const CLIENT_URL = process.env.CLIENT_URL || '';
  */
 const account = (req: Request, res: Response) => {
     if (req.user) {
-        res.status(200).json({
-            user: req.user
-        });
+        res.status(200).json(req.user);
         return;
     }
 
